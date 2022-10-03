@@ -16,7 +16,6 @@
     + $ git push -u origin main
 
 
-
 ## Contenido del curso
 ### Sección 1: Introducción
 #### 1. Resultado final de la aplicación
@@ -953,11 +952,135 @@
     + $ yarn start
 
 #### 40. Añadiendo Semantic UI React
++ [Semantic UI React](https://react.semantic-ui.com)
+1. Instalar las dependencia de **Semantic UI React**:
+    + $ yarn add semantic-ui-react semantic-ui-css
+2. Importar los estilos de la **Semantic UI React** a **index.js** (client\src\index.js):
+    ```js
+    ≡
+    import App from './App';
+    import reportWebVitals from './reportWebVitals';
+    import 'semantic-ui-css/semantic.min.css';
+    import './index.css';
+    ≡
+    ```
+    + **Nota**: en caso de problemas de compilación, ejecutar:
+        + yarn add react-scripts@4.0.3
+3. Modificar el componente principal **App.js** (client\src\App.js):
+    ```js
+    import { Button } from 'semantic-ui-react'
+
+    export default function App() {
+        return (
+            <div className="app">
+                <h1>Estamos en App</h1>
+                <Button primary>Primary</Button>
+                <Button secondary>Secondary</Button>
+            </div>
+        );
+    }
+    ```
+4. Eliminar:
+    + client\src\App.css
+    + client\src\logo.svg
+
+#### 41. Añadiendo SASS al proyecto
+1. Cambiar nombre de **client\src\index.css** a **client\src\index.scss**.
+2. Instalar las dependencias de SASS:
+    + $ yarn add node-sass
+3. Crear archivo de estilos **client\src\scss\index.scss**:
+    ```scss
+    @import "./colors.scss";
+    ```
+4. Crear archivo de estilos **client\src\scss\colors.scss**:
+    ```scss
+    $font-light: #fff;
+    $font-grey: #a2a2a2;
+    $font-dark: #000;
+
+    $background-light: #fff;
+    $background-grey-light: #fafafa;
+
+    $border-grey: #dbdbdb;
+    $border-dark: #000;
+
+    $action: #0095f6;
+    $danger: #ed4956;
+    ```
+5. Modificar el archivo de estilos principal del proyecto **index.scss** (client\src\index.scss):
+    ```scss
+    @import "./scss/index.scss";
+
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: $background-grey-light;
+    }
+
+    code {
+        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    }
+    ```
+6. Modificar **client\src\index.js**:
+    ```js
+    ≡
+    import 'semantic-ui-css/semantic.min.css';
+    import './index.scss';
+    ≡
+    ```
+
+#### 42. Conectando la app con el servidor usando Apollo Client
++ [Extensión Chrome Apollo Client Devtools](https://chrome.google.com/webstore/detail/apollo-client-devtools/jdkknkkbebbapilgoeccciglkfbmbnfm?hl=es)
+1. Instalar la dependencia de **Apollo Client**:
+    + $ yarn add @apollo/client
+2. Instalar dependencia de **GraphQL**:
+    + $ yarn add graphql
+3. Crear archivo de configuración **client\src\config\apollo.js**:
+    ```js
+    import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client"
+
+    const httpLink = createHttpLink({
+        uri: "http://localhost:4000/"
+    })
+
+    const client = new ApolloClient({
+        connectToDevTools: true,
+        cache: new InMemoryCache(),
+        link: httpLink
+    })
+
+    export default client
+    ```
+4. Modificar **App.js** (client\src\App.js):
+    ```js
+    import { Button } from 'semantic-ui-react'
+    import { ApolloProvider } from '@apollo/client'
+    import client from './config/apollo'
+
+    export default function App() {
+        return (
+            <ApolloProvider client={client}>
+                <div className="app">
+                    <h1>Estamos en App</h1>
+                    <Button primary>Primary</Button>
+                    <Button secondary>Secondary</Button>
+                </div>
+            </ApolloProvider>
+        );
+    }
+    ```
+5. Instalar la extensión de Chrome **[Apollo Client Devtools](https://chrome.google.com/webstore/detail/apollo-client-devtools/jdkknkkbebbapilgoeccciglkfbmbnfm?hl=es)**.
++ **Nota**: en caso de problemas con la instalación de GraphQL, ejecutar:
+    + $ npm install apollo-client graphql
+
+
+### Sección 7: Formulario de registro y login de usuarios
+43. Separando zonas de auth y invitados
 6 min
 Reproducir
-
-
-
 
 
 
@@ -968,25 +1091,6 @@ Reproducir
 
 
 
-
-
-
-
-
-
-
-#### 41. Añadiendo SASS al proyecto
-7 min
-Reproducir
-#### 42. Conectando la app con el servidor usando Apollo Client
-9 min
-Reproducir
-
-
-### Sección 7: Formulario de registro y login de usuarios
-43. Separando zonas de auth y invitados
-6 min
-Reproducir
 44. Pintando la página de Auth
 14 min
 Reproducir
