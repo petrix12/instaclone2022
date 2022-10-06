@@ -1078,8 +1078,975 @@
 
 
 ### Sección 7: Formulario de registro y login de usuarios
-43. Separando zonas de auth y invitados
-6 min
+#### 43. Separando zonas de auth e invitados
+1. Crear página **client\src\pages\Auth\index.js**:
+    ```js
+    export { default } from './Auth' 
+    ```
+2. Crear página **client\src\pages\Auth\Auth.js**:
+    ```js
+    import './Auth.scss'
+
+    export default function Auth() {
+        return (
+            <div>
+                <h1>Estamos en Auth</h1>
+            </div>
+        )
+    }
+    ```
+3. Modificar componente principal **client\src\App.js**:
+    ```js
+    import { useState } from 'react'
+    import { ApolloProvider } from '@apollo/client'
+    import client from './config/apollo'
+    import Auth from './pages/Auth'
+
+    export default function App() {
+        const [auth, setAuth] = useState(undefined) 
+        return (
+            <ApolloProvider client={client}>
+                { !auth ? <Auth /> : <h1>Estas logeado</h1>}
+            </ApolloProvider>
+        );
+    }
+    ```
+4. Crear archivo de estilo **client\src\pages\Auth\Auth.scss**:
+    ```scss
+    @import "../../scss/index.scss";
+
+    .auth {   
+    }
+    ```
+
+#### 44. Pintando la página de Auth
+1. Modificar página **client\src\pages\Auth\Auth.js**:
+    ```js
+    import { useState } from 'react'
+    import { Container, Image } from 'semantic-ui-react'
+    import logo from '../../assets/png/logo-completo-sm.png'
+    import './Auth.scss'
+
+    export default function Auth() {
+        const [showLogin, setShowLogin] = useState(true) 
+        return (
+            <Container fluid className='auth'>
+                <Image src={logo} />
+                <div className='container-form'>
+                    { showLogin ? <p>Formularios de login</p> : <p>Formularios de registro</p> }
+                </div>
+
+                <div className='change-form'>
+                    <p>
+                        { showLogin ? (
+                            <>
+                                ¿No tienes cuenta?
+                                <span onClick={() => setShowLogin(!showLogin)}>Registrate</span>
+                            </>
+                        ) : (
+                            <>
+                                Entra con tu cuenta
+                                <span onClick={() => setShowLogin(!showLogin)}>Iniciar sesión</span>
+                            </>
+                        )}
+                        
+                    </p>
+                </div>
+            </Container>
+        )
+    }
+    ```
+2. Modificar estilos **client\src\pages\Auth\Auth.scss**:
+    ```scss
+    @import "../../scss/index.scss";
+
+    .auth {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: 100vh;
+        background-color: $background-grey-light;
+
+        img {
+            width: 250px;
+        }
+
+        .container-form {
+            width: 400px;
+            background-color: $background-light;
+            padding: 20px 50px;
+            border: 1px solid $border-grey;
+            margin-top: 50px;
+            border-radius: 5px;
+        }
+
+        .change-form {
+            margin-top: 10px;
+            width: 400px;
+            background-color: $background-light;
+            padding: 20px 50px;
+            border: 1px solid $border-grey;
+            text-align: center;
+            border-radius: 5px;
+
+            span {
+                color: $action;
+                font-weight: bold;
+                margin-left: 10px;
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+    ```
+
+#### 45. Creando el formulario de registro
+1. Crear indice de componente **client\src\components\Auth\RegisterForm\index.js**:
+    ```js
+    export { default } from './RegisterForm' 
+    ```
+2. Crear estilos **client\src\components\Auth\RegisterForm\RegisterForm.scss**:
+    ```scss
+    @import "../../../scss/index.scss";
+
+    .register-form-title {
+        font-size: 17px !important;
+        text-align: center;
+        margin-bottom: 20px;
+
+    }
+
+    .register-form {
+        input {
+            padding: 13px 15px !important;
+            background-color: #f9f9f9 !important;
+        }
+    }
+    ```
+3. Crear componente **client\src\components\Auth\RegisterForm\RegisterForm.js**:
+    ```js
+    import { Form, Button } from 'semantic-ui-react'
+    import "./RegisterForm.scss"
+
+    export default function RegisterForm(props) {
+        const { setShowLogin } = props
+        const onSubmit = () => {
+            console.log('Formulario enviado')
+        }
+
+        return (
+            <>
+                <h2 className='register-form-title'>Regístrate para ver fotos y videos de tus amigos</h2>
+                <Form className='register-form' onSubmit={onSubmit}>
+                    <Form.Input type="text" placeholder="Nombre completo" name="name" />
+                    <Form.Input type="text" placeholder="Nombre de usuario" name="username" />
+                    <Form.Input type="text" placeholder="Correo electrónico" name="email" />
+                    <Form.Input type="password" placeholder="Contraseña" name="password" />
+                    <Form.Input type="password" placeholder="Confirmar contraseña" name="repeatPassword" />
+                    <Button type="submit" className='btn-submit'>Registrarse</Button>
+                </Form>
+            </>
+        )
+    }
+    ```
+4. Modificar página **client\src\pages\Auth\Auth.js**:
+    ```js
+    ≡
+    import RegisterForm from '../../components/Auth/RegisterForm/RegisterForm'
+    import logo from '../../assets/png/logo-completo-sm.png'
+    ≡
+    export default function Auth() {
+        ≡
+        return (
+            <Container fluid className='auth'>
+                ≡
+                <div className='container-form'>
+                    { showLogin ? <p>Formularios de login</p> : <RegisterForm setShowLogin={setShowLogin} /> }
+                </div>
+                ≡
+            </Container>
+        )
+    }
+    ```
+5. Modificar estilos principales **client\src\index.scss**:
+    ```scss
+    ≡
+    .ui.form {
+        .btn-submit {
+            width: 100%;
+            background-color: $action;
+            color: $font-light;
+        }
+    }
+    ```
+
+#### 46. Control de datos del formulario con Formik
++ Yarm formik: https://classic.yarnpkg.com/en/package/formik
+1. Instalar formik:
+    + $ yarn add formik
+2. Modificar componente **client\src\components\Auth\RegisterForm\RegisterForm.js**:
+    ```js
+    import { Form, Button } from 'semantic-ui-react'
+    import { useFormik } from 'formik'
+    import "./RegisterForm.scss"
+
+    export default function RegisterForm(props) {
+        const { setShowLogin } = props
+
+        const formik = useFormik({
+            initialValues: initialValues(),
+            validationSchema: null,
+            onSubmit: (formValue) => {
+                console.log("Formulario enviado....")
+                console.log(formValue)
+            }
+        })
+
+        return (
+            <>
+                <h2 className='register-form-title'>Regístrate para ver fotos y videos de tus amigos</h2>
+                <Form className='register-form' onSubmit={formik.handleSubmit} onChange={formik.handleChange} >
+                    <Form.Input type="text" placeholder="Nombre completo" name="name" />
+                    <Form.Input type="text" placeholder="Nombre de usuario" name="username" />
+                    <Form.Input type="text" placeholder="Correo electrónico" name="email" />
+                    <Form.Input type="password" placeholder="Contraseña" name="password" />
+                    <Form.Input type="password" placeholder="Confirmar contraseña" name="repeatPassword" />
+                    <Button type="submit" className='btn-submit'>Registrarse</Button>
+                </Form>
+            </>
+        )
+    }
+
+    function initialValues() {
+        return {
+            name: "",
+            username: "",
+            email: "",
+            password: "",
+            repeatPassword: ""
+        }
+    }
+    ```
+
+#### 47. Añadiendo el sistema de reset del formulario
+1. Modificar componente **client\src\components\Auth\RegisterForm\RegisterForm.js**:
+    ```js
+    ≡
+    <Form className='register-form' onSubmit={formik.handleSubmit} onChange={formik.handleChange} >
+        <Form.Input type="text" placeholder="Nombre completo" name="name" value={formik.values.name} />
+        <Form.Input type="text" placeholder="Nombre de usuario" name="username" value={formik.values.username} />
+        <Form.Input type="text" placeholder="Correo electrónico" name="email" value={formik.values.email} />
+        <Form.Input type="password" placeholder="Contraseña" name="password" value={formik.values.password} />
+        <Form.Input type="password" placeholder="Confirmar contraseña" name="repeatPassword" value={formik.values.repeatPassword} />
+        <Button type="submit" className='btn-submit'>Registrarse</Button>
+        {/* <Button type="button" onClick={formik.handleReset} className=''>Limpiar formulario</Button> */}
+    </Form>
+    ≡
+    ```
+
+#### 48. Validando formulario con Yup
++ Yarm yup: https://classic.yarnpkg.com/en/package/yup
+1. Instalar la dependencia de **Yup** para validar formularios:
+    + $ yarn add yup
+2. Modificar componente **RegisterForm** (client\src\components\Auth\RegisterForm\RegisterForm.js):
+    ```js
+    ≡
+    import * as Yup from 'yup'
+    import "./RegisterForm.scss"
+
+    export default function RegisterForm(props) {
+        const { setShowLogin } = props
+
+        const formik = useFormik({
+            initialValues: initialValues(),
+            validationSchema: Yup.object({
+                name: Yup.string().required("Tu nombre es requerido"),
+                username: Yup.string()
+                    .matches(/^[a-zA-Z0-9-]*$/, "El nombre del usuario no puede tener espacio")
+                    .required("Tu nombre de usuario es requerido"),
+                email: Yup.string().email("email no valido").required("Tu email es requerido"),
+                password: Yup.string()
+                    .required("La contraseña es requerida")
+                    .oneOf([Yup.ref("repeatPassword")], "La contraseña no coincide con la confirmación"),
+                repeatPassword: Yup.string()
+                    .required("La confirmación de la contraseña es requerida")
+                    .oneOf([Yup.ref("repeatPassword")], "La confirmación no coincide con la contraseña")
+            }),
+            onSubmit: (formValue) => {
+                ≡
+            }
+        })
+
+        return (
+            <>
+                <h2 className='register-form-title'>Regístrate para ver fotos y videos de tus amigos</h2>
+                <Form className='register-form' onSubmit={formik.handleSubmit} onChange={formik.handleChange} >
+                    <Form.Input 
+                        type="text" 
+                        placeholder="Nombre completo" 
+                        name="name" 
+                        value={formik.values.name}
+                        error={formik.errors.name && true}
+                    />
+                    <Form.Input 
+                        type="text" 
+                        placeholder="Nombre de usuario" 
+                        name="username" 
+                        value={formik.values.username}
+                        error={formik.errors.username && true}
+                    />
+                    <Form.Input 
+                        type="text" 
+                        placeholder="Correo electrónico" 
+                        name="email" 
+                        value={formik.values.email}
+                        error={formik.errors.email && true}
+                    />
+                    <Form.Input 
+                        type="password" 
+                        placeholder="Contraseña" 
+                        name="password" 
+                        value={formik.values.password}
+                        error={formik.errors.password && true}
+                    />
+                    <Form.Input 
+                        type="password" 
+                        placeholder="Confirmar contraseña"
+                        name="repeatPassword"
+                        value={formik.values.repeatPassword}
+                        error={formik.errors.repeatPassword && true} 
+                    />
+                    <Button type="submit" className='btn-submit'>Registrarse</Button>
+                    {/* <Button type="button" onClick={formik.handleReset} className=''>Limpiar formulario</Button> */}
+                </Form>
+            </>
+        )
+    }
+    ≡
+    ```
+
+#### 49. Registrando usuario en la base de datos
+1. Crear mutation **User** (client\src\gql\user.js):
+    ```js
+    import { gql } from '@apollo/client'
+
+    export const REGISTER = gql`
+        mutation register($input: UserInput){
+            register(input: $input){
+                id
+                name
+                username
+                email
+                createAt
+            }
+        }
+    `
+    ```
+2. Modificar componete **RegisterForm** (client\src\components\Auth\RegisterForm\RegisterForm.js):
+    ```js
+    ≡
+    import * as Yup from 'yup'
+    import { useMutation } from '@apollo/client'
+    import { REGISTER } from '../../../gql/user'
+    ≡
+    export default function RegisterForm(props) {
+        const { setShowLogin } = props
+        const [register] = useMutation(REGISTER)
+
+        const formik = useFormik({
+            ≡
+            onSubmit: async (formData) => {
+                try {
+                    const newUser = formData
+                    delete newUser.repeatPassword
+                    const result = await register({
+                        variables: {
+                            input: newUser
+                        }
+                    })
+                    console.log(result)
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        })
+        ≡
+    }
+    ≡
+    ```
+
+#### 50. Toast y redirecionando formulario
++ **NOTA**: NO FUE POSIBLE INSTALARE **react-toastify**:
+    + **ERROR**:
+    ```
+    Failed to compile.
+
+    ./node_modules/react-toastify/dist/react-toastify.esm.mjs
+    Can't import the named export 'cloneElement' from non EcmaScript module (only default export is available)
+    ```
++ [Yarn react-toastify](https://classic.yarnpkg.com/en/package/react-toastify)
++ [Documentación React-toastify](https://fkhadra.github.io/react-toastify/introduction)
+1. Instalar la dependencia **react-toastify** en **client**:
+    + $ yarn add react-toastify
+2. Modificar componete principal **App** (client\src\App.js):
+    ```js
+    import { useState } from 'react'
+    import { ApolloProvider } from '@apollo/client'
+    // import { ToastContainer } from 'react-toastify'
+    import 'react-toastify/dist/ReactToastify.css';
+
+    import client from './config/apollo'
+    import Auth from './pages/Auth'
+
+    export default function App() {
+        const [auth, setAuth] = useState(undefined) 
+        return (
+            <ApolloProvider client={client}>
+                { !auth ? <Auth /> : <h1>Estas logeado</h1>}
+                {/* <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar
+                    newestOnTop
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                /> */}
+            </ApolloProvider>
+        );
+    }
+    ```
+3. Modificar componente **RegisterForm** (client\src\components\Auth\RegisterForm\RegisterForm.js):
+    ```js
+    import { Form, Button } from 'semantic-ui-react'
+    import { useFormik } from 'formik'
+    import * as Yup from 'yup'
+    //import { toast } from 'react-toastify'
+    import { useMutation } from '@apollo/client'
+    import { REGISTER } from '../../../gql/user'
+    import "./RegisterForm.scss"
+
+    export default function RegisterForm(props) {
+        const { setShowLogin } = props
+        const [register] = useMutation(REGISTER)
+
+        const formik = useFormik({
+            initialValues: initialValues(),
+            validationSchema: Yup.object({
+                ≡
+            }),
+            onSubmit: async (formData) => {
+                try {
+                    const newUser = formData
+                    delete newUser.repeatPassword
+                    await register({
+                        variables: {
+                            input: newUser
+                        }
+                    })
+                    alert("Usuario registrado satisfactoriamente")
+                    setShowLogin(true)
+                } catch (error) {
+                    //toast.error(error.message)
+                    alert(error.message)
+                    console.log(error)
+                }
+            }
+        })
+
+        return (
+            ≡
+        )
+    }
+    ≡
+    ```
+
+#### 51. Creando formulario de login
+1. Crear **client\src\components\Auth\LoginForm\index.js**:
+    ```js
+    export { default } from './LoginForm' 
+    ```
+2. Crear archivo de estilos **LoginForm** (client\src\components\Auth\LoginForm\LoginForm.scss):
+    ```scss
+    @import "../../../scss/index.scss";
+
+    .login-form-title {
+        font-size: 17px !important;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .login-form {
+        input {
+            padding: 13px 15px !important;
+            background-color: #f9f9f9 !important;
+        }
+    }
+    ```
+3. Crear componente **LoginForm** (client\src\components\Auth\LoginForm\LoginForm.js):
+    ```js
+    import { Form, Button } from 'semantic-ui-react'
+    import './LoginForm.scss'
+
+    export default function LoginForm() {
+        return (
+            <>
+                <h2 className='login-form-title'>Entra para ver fotos y videos de tus amigos</h2>
+                <Form className='login-form' >
+                    <Form.Input 
+                        type="text" 
+                        placeholder="Correo electrónico" 
+                        name="email" 
+                    />
+                    <Form.Input 
+                        type="password" 
+                        placeholder="Contraseña" 
+                        name="password" 
+                    />
+                    <Button type="submit" className='btn-submit'>Iniciar sesión</Button>
+                </Form>
+            </>
+        )
+    }
+    ```
+4. Modificar page **Auth** (client\src\pages\Auth\Auth.js):
+    ```js
+    ≡
+    import RegisterForm from '../../components/Auth/RegisterForm/RegisterForm'
+    import LoginForm from '../../components/Auth/LoginForm/LoginForm'
+    ≡
+    export default function Auth() {
+        ≡
+        return (
+            <Container fluid className='auth'>
+                ≡
+                <div className='container-form'>
+                    { showLogin ? <LoginForm /> : <RegisterForm setShowLogin={setShowLogin} /> }
+                </div>
+                ≡
+            </Container>
+        )
+    }
+    ```
+
+#### 52. Añadiendo formik al formulario
+1. Modificar componente **LoginForm** (client\src\components\Auth\LoginForm\LoginForm.js):
+    ```js
+    import { Form, Button } from 'semantic-ui-react'
+    import { useFormik } from 'formik'
+    import './LoginForm.scss'
+
+    export default function LoginForm() {
+
+        const formik = useFormik({
+            initialValues: initialValues(),
+            validationSchema: null,
+            onSubmit: async (formData) => {
+                console.log(formData)
+            }
+        })
+
+        return (
+            <>
+                <h2 className='login-form-title'>Entra para ver fotos y videos de tus amigos</h2>
+                <Form className='login-form' onSubmit={formik.handleSubmit} onChange={formik.handleChange} >
+                    <Form.Input 
+                        type="text" 
+                        placeholder="Correo electrónico" 
+                        name="email" 
+                        value={formik.values.email}
+                        error={formik.errors.email && true}
+                    />
+                    <Form.Input 
+                        type="password" 
+                        placeholder="Contraseña" 
+                        name="password"
+                        value={formik.values.password}
+                        error={formik.errors.password && true} 
+                    />
+                    <Button type="submit" className='btn-submit'>Iniciar sesión</Button>
+                </Form>
+            </>
+        )
+    }
+
+    function initialValues() {
+        return {
+            email: "",
+            password: ""
+        }
+    }
+    ```
+
+#### 53. Validaciones del formulario de login
+1. Modificar componente **LoginForm** (client\src\components\Auth\LoginForm\LoginForm.js):
+    ```js
+    ≡
+    import { useFormik } from 'formik'
+    import * as Yup from 'yup'
+    ≡
+    export default function LoginForm() {
+        const formik = useFormik({
+            ≡
+            validationSchema: Yup.object({
+                email: Yup.string().email("email no valido").required("Tu email es requerido"),
+                password: Yup.string().required("La contraseña es requerida")
+            }),
+            onSubmit: async (formData) => { 
+                ≡
+            }
+        })
+
+        return (       
+            ≡
+        )
+    }
+    ≡
+    ```
+
+#### 54. Generando el token del login
+1. Modificar **mutation User** (client\src\gql\user.js):
+    ```js
+    ≡
+    export const LOGIN = gql`
+        mutation login($input: LoginInput){
+            login(input: $input){
+                token
+            }
+        }
+    `
+    ```
+2. Modificar el componente **LoginForm** (client\src\components\Auth\LoginForm\LoginForm.js):
+    ```js
+    import { useState } from 'react'
+    import { Form, Button } from 'semantic-ui-react'
+    import { useFormik } from 'formik'
+    import * as Yup from 'yup'
+    import { useMutation } from '@apollo/client'
+    import { LOGIN } from '../../../gql/user'
+    import './LoginForm.scss'
+
+    export default function LoginForm() {
+        const [error, setError] = useState("")
+        const [login] = useMutation(LOGIN)
+
+        const formik = useFormik({
+            ≡
+            onSubmit: async (formData) => {
+                try {
+                    setError("")
+                    const { data } = await login({
+                        variables: {
+                            input: formData
+                        }
+                    })
+                    alert("Usuario logeado satisfactoriamente")
+                    console.log(data)
+                    //setShowLogin(true)
+                } catch (error) {
+                    setError(error.message)
+                    alert(error.message)
+                    console.log(error)
+                }
+            }
+        })
+
+        return (
+            <>
+                <h2 className='login-form-title'>Entra para ver fotos y videos de tus amigos</h2>
+                <Form className='login-form' onSubmit={formik.handleSubmit} onChange={formik.handleChange} >
+                    ≡
+                    <Button type="submit" className='btn-submit'>Iniciar sesión</Button>
+                    {error && <p className='submit-error'>{error}</p>}
+                </Form>
+            </>
+        )
+    }
+    ≡
+    ```
+3. Modificar **client\src\index.scss**:
+    ```scss
+    ≡
+    .ui.form {
+        .btn-submit {
+            ≡
+        }
+        .submit-error {
+            color: $danger;
+            text-align: center;
+            margin: 20px 0 0 0;
+        }
+    }
+    ```
+
+#### 55. Guardando el token en el localStorage
+1. Crear **client\src\utils\constants.js**:
+    ```js
+    export const TOKEN = 'token'
+    ```
+2. Crear **client\src\utils\token.js**:
+    ```js
+    import { TOKEN } from './constants'
+
+    export function setToken(token) {
+        localStorage.setItem(TOKEN, token)
+    }
+
+    export function getToken() {
+        return localStorage.getItem(TOKEN)
+    }
+    ```
+3. Modificar **componente LoginForm** (client\src\components\Auth\LoginForm\LoginForm.js):
+    ```js
+    ≡
+    import { useMutation } from '@apollo/client'
+    import { LOGIN } from '../../../gql/user'
+    import { setToken } from '../../../utils/token'
+    import './LoginForm.scss'
+
+    export default function LoginForm() {
+        const [error, setError] = useState("")
+        const [login] = useMutation(LOGIN)
+
+        const formik = useFormik({
+            ≡
+            onSubmit: async (formData) => {
+                try {
+                    setError("")
+                    const { data } = await login({
+                        variables: {
+                            input: formData
+                        }
+                    })
+                    const { token } = data.login
+                    setToken(token)
+                    alert("Usuario logeado satisfactoriamente")
+                } catch (error) {
+                    ≡
+                }
+            }
+        })
+
+        return (
+            ≡
+        )
+    }
+    ≡
+    ```
+4. Modificar **compnente principal App** (client\src\App.js):
+    ```js
+    import { useState, useEffect } from 'react'
+    import { ApolloProvider } from '@apollo/client'
+    import client from './config/apollo'
+    import Auth from './pages/Auth'
+    import { getToken } from './utils/token'
+
+    export default function App() {
+        const [auth, setAuth] = useState(undefined)
+        
+        useEffect(() => {
+            const token = getToken()
+            if(!token){
+                setAuth(null)
+            }else{
+                setAuth(token)
+            }
+            console.log(token)
+        }, [])
+
+        return (
+            ≡
+        );
+    }
+    ```
+
+#### 56. API Context para guardar el usuario
+1. Crear **context AuthContext** (client\src\context\AuthContext.js):
+    ```js
+    import { createContext } from "react"
+
+    const AuthContext = createContext({
+        user: undefined
+    })
+
+    export default AuthContext
+    ```
+2. Modificar **componente principal App** (client\src\App.js):
+    ```js
+    import { useState, useEffect, useMemo } from 'react'
+    import { ApolloProvider } from '@apollo/client'
+    import client from './config/apollo'
+    import Auth from './pages/Auth'
+    import { getToken } from './utils/token'
+    import AuthContext from './context/AuthContext'
+
+    export default function App() {
+        ≡
+        useEffect(() => {
+            ≡
+        }, [])
+
+        const logout = () => {
+            console.log("Cerrar sesión")
+        }
+
+        const setUser = (user) => {
+            setAuth(user)
+        }
+
+        const authData = useMemo(
+            () => ({
+                auth,
+                logout,
+                setUser
+            }),
+            [auth]
+        )
+
+        return (
+            <ApolloProvider client={client}>
+                <AuthContext.Provider value={authData}>
+                    { !auth ? <Auth /> : <h1>Estas logeado</h1> }
+                </AuthContext.Provider>
+            </ApolloProvider>
+        );
+    }
+    ```
+3. Crear **hooks useAuth** (client\src\hooks\useAuth.js):
+    ```js
+    import { useContext } from "react"
+    import AuthContext from "../context/AuthContext"
+
+    export default () => useContext(AuthContext)
+    ```
+4. Modificar **componente LoginForm** (client\src\components\Auth\LoginForm\LoginForm.js):
+    ```js
+    ≡
+    import { setToken } from '../../../utils/token'
+    import useAuth from '../../../hooks/useAuth'
+    import './LoginForm.scss'
+
+    export default function LoginForm() {
+        const [error, setError] = useState("")
+        const [login] = useMutation(LOGIN)
+        const { setUser } = useAuth()
+
+        const formik = useFormik({
+            initialValues: initialValues(),
+            validationSchema: Yup.object({
+                ≡
+            }),
+            onSubmit: async (formData) => {
+                try {
+                    setError("")
+                    const { data } = await login({
+                        variables: {
+                            input: formData
+                        }
+                    })
+                    const { token } = data.login
+                    setToken(token)
+                    setUser(token)
+                } catch (error) {
+                    ≡
+                }
+            }
+        })
+
+        return (
+            ≡
+        )
+    }
+    ≡
+    ```
+
+#### 57. Extrayendo los datos del token y guardándoos en el estado
++ [Yarn jwt-decode](https://classic.yarnpkg.com/en/package/jwt-decode)
+1. En **client** instalar dependencia **jwt-decode**:
+    + $ yarn add jwt-decode
+2. Crear **client\src\pages\Home\index.js**:
+    ```js
+    export { default } from './Home' 
+    ```
+3. Crear **page Home** (client\src\pages\Home\Home.js):
+    ```js
+    import useAuth from "../../hooks/useAuth"
+
+    export default function Home() {
+        const auth = useAuth()
+        console.log(auth)
+        return (
+            <div>
+                <h1>Página Home</h1>
+            </div>
+        )
+    }
+    ```
+4. Modificar **componente principal App** (client\src\App.js):
+    ```js
+    ≡
+    import Home from './pages/Home'
+
+    export default function App() {
+        ≡
+        return (
+            <ApolloProvider client={client}>
+                <AuthContext.Provider value={authData}>
+                    { !auth ? <Auth /> : <Home /> }
+                </AuthContext.Provider>
+            </ApolloProvider>
+        );
+    }
+    ```
+5. Modificar **client\src\utils\token.js**:
+    ```js
+    import jwtDecode from 'jwt-decode';
+    ≡
+    export function decodeToken(token) {
+        return jwtDecode(token)
+    }
+    ```
+6. Modificar **componente LoginForm** (client\src\components\Auth\LoginForm\LoginForm.js):
+    ```js
+    ≡
+    import { setToken, decodeToken } from '../../../utils/token'
+    import useAuth from '../../../hooks/useAuth'
+    import './LoginForm.scss'
+
+    export default function LoginForm() {
+        ≡
+        const formik = useFormik({
+            ≡
+            onSubmit: async (formData) => {
+                try {
+                    setError("")
+                    const { data } = await login({
+                        ≡
+                    })
+                    const { token } = data.login
+                    setToken(token)
+                    setUser(decodeToken(token))
+                } catch (error) {
+                    ≡
+                }
+            }
+        })
+
+        return (
+            ≡
+        )
+    }
+    ≡
+    ```
+
+### Sección 8: Sistema de Navegación
+#### 58. Instalando React Router Dom
+3 min
 Reproducir
 
 
@@ -1091,63 +2058,25 @@ Reproducir
 
 
 
-44. Pintando la página de Auth
-14 min
-Reproducir
-45. Creando el formulario de registro
-13 min
-Reproducir
-46. Control de datos del formulario con Formik
-14 min
-Reproducir
-47. Añadiendo el sistema de reset del formulario
+
+
+
+
+#### 59. Creando todas las paginas de nuestra aplicación
 4 min
 Reproducir
-48. Validando formulario con Yup
-15 min
-Reproducir
-49. Registrando usuario en la base de datos
-15 min
-Reproducir
-50. Toast y redirecionando formulario
-7 min
-Reproducir
-51. Creando formulario de login
-7 min
-Reproducir
-52. Añadiendo formik al formulario
-5 min
-Reproducir
-53. Validaciones del formulario de login
-4 min
-Reproducir
-54. Generando el token del login
-11 min
-Reproducir
-55. Guardando el token en el localStorage
+#### 60. Creando el sistema de navegación
 12 min
 Reproducir
-56. API Context para guardar el usuario
-15 min
-Reproducir
-57. Extrayendo los datos del token y guardándoos en el estado
-9 min
-Reproducir
-58. Instalando React Router Dom
-3 min
-Reproducir
-59. Creando todas las paginas de nuestra aplicación
-4 min
-Reproducir
-60. Creando el sistema de navegación
-12 min
-Reproducir
-61. Rutas dinámicas
+#### 61. Rutas dinámicas
 5 min
 Reproducir
-62. Sistema de Layouts
+#### 62. Sistema de Layouts
 9 min
 Reproducir
+
+
+### Sección 9: Header
 63. Estructura del header
 8 min
 Reproducir

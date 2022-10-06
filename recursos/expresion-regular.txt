@@ -1,0 +1,1 @@
+.matches(/^[a-zA-Z0-9-]*$/, "El nombre del usuario no puede tener espacio")
