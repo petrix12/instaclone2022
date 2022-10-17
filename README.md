@@ -2068,8 +2068,224 @@
     + $ yarn add react-router-dom
 
 #### 59. Creando todas las paginas de nuestra aplicación
-4 min
+1. Modificar **client\src\pages\Home\Home.js**:
+    ```js
+    import './Home.scss'
+
+    export default function Home() {
+        return (
+            <div>
+                <h1>Página Home</h1>
+            </div>
+        )
+    }
+    ```
+2. Crear **client\src\pages\Home\Home.scss**.
+3. Crear **client\src\pages\Error404\index.js**:
+    ```js
+    export { default } from './Error404' 
+    ```
+4. Crear **client\src\pages\Error404\Error404.scss**:
+    ```scss
+    .error404 {
+        
+    }
+    ```
+5. Crear **client\src\pages\Error404\Error404.js**:
+    ```js
+    import React from 'react'
+    import './Error404.scss'
+
+    export default function Error404() {
+        return (
+            <div>
+                <h1>Error 404</h1>
+            </div>
+        )
+    }
+    ```
+6. Crear **client\src\pages\User.js**:
+    ```js
+    import React from 'react'
+
+    export default function User() {
+        return (
+            <div>
+                <h1>User....</h1>
+            </div>
+        )
+    }
+    ```
+
+#### 60. Creando el sistema de navegación
++ [Yarn lodash](https://classic.yarnpkg.com/en/package/lodash)
+1. Instalar dependencia:
+    + $ yarn add lodash
+2. Crear **client\src\routes\routes.js**:
+    ```js
+    // Pages
+    import Home from '../pages/Home'
+    import User from '../pages/User'
+    import Error404 from '../pages/Error404'
+
+    const routes = [
+        {
+            path: '/',
+            component: Home,
+            exact: true
+        },
+        {
+            path: '/user',
+            component: User,
+            exact: true
+        },
+        {
+            component: Error404
+        }
+    ]
+
+    export default routes
+    ```
+3. Crear **client\src\routes\Navigation.js**:
+    ```js
+    import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+    /* import routes from './routes' */
+    /* import { map } from 'lodash' */
+    // Pages
+    import Home from '../pages/Home'
+    import User from '../pages/User'
+    import Error404 from '../pages/Error404'
+
+    export default function Navigation() {
+        return (
+            <Router>
+                <Routes>
+                    <Route exact path="/" element={<Home/>}>
+                        
+                    </Route>
+                    <Route exact path="/user" element={<User/>}>
+                        
+                    </Route>
+        
+                    <Route path="*" element={<Error404/>}>
+                        
+                    </Route>
+                </Routes>
+            </Router>
+        )
+    }
+    ```
+4. Modificar **client\src\App.js**:
+    ```js
+    ≡
+    import { getToken } from './utils/token'
+    import AuthContext from './context/AuthContext'
+    import Navigation from './routes/Navigation'
+
+    export default function App() {
+        ≡
+        return (
+            <ApolloProvider client={client}>
+                <AuthContext.Provider value={authData}>
+                    { !auth ? <Auth /> : <Navigation /> }
+                </AuthContext.Provider>
+            </ApolloProvider>
+        );
+    }
+    ```
+
+#### 61. Rutas dinámicas
+1. Modificar **client\src\routes\Navigation.js**:
+    ```js
+    ≡
+    <Router>
+        <Routes>
+            <Route exact path="/" element={<Home/>}>
+                
+            </Route>
+            <Route exact path="/:username" element={<User/>}>
+                
+            </Route>
+
+            <Route path="*" element={<Error404/>}>
+                
+            </Route>
+        </Routes>
+    </Router>
+    ≡
+    ```
+2. Modificar **client\src\pages\User.js**:
+    ```js
+    import { useParams } from 'react-router-dom'
+
+    export default function User() {
+        const param = useParams()
+        console.log(param)
+
+        return (
+            ≡
+        )
+    }
+    ```
+
+#### 62. Sistema de Layouts
+1. Crear **client\src\layouts\LayoutBasic.js**:
+    ```js
+    import { Container } from 'semantic-ui-react'
+    import { Outlet } from 'react-router-dom'
+
+    export default function LayoutBasic(props) {
+        return (
+            <div>
+                <h1>Menu layout..</h1>
+                <Container>
+                    <Outlet/>
+                </Container>
+            </div>
+        )
+    }
+    ```
+2. Modificar **client\src\routes\Navigation.js**:
+    ```js
+    import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+    import LayoutBasic from '../layouts/LayoutBasic'
+
+    // Pages
+    import Home from '../pages/Home'
+    import User from '../pages/User'
+    import Error404 from '../pages/Error404'
+
+    export default function Navigation() {
+        const Layout = Route.Layout
+
+        return (
+            <Router>
+                <Routes>
+                    <Route element={<LayoutBasic />}>
+                        <Route exact path="/" element={<Home/>}>
+                        </Route>
+                        <Route exact path="/:username" element={<User/>}>   
+                        </Route>
+                    </Route>
+        
+                    <Route path="*" element={<Error404/>}>   
+                    </Route>
+                </Routes>
+            </Router>
+        )
+    }
+    ```
+
+### Sección 9: Header
+#### 63. Estructura del header
+8 min
 Reproducir
+
+
+
+
+
+
 
 
 
@@ -2084,27 +2300,16 @@ Reproducir
 
 
 
-#### 60. Creando el sistema de navegación
-12 min
-Reproducir
-#### 61. Rutas dinámicas
-5 min
-Reproducir
-#### 62. Sistema de Layouts
+
+#### 64. Opciones del header
 9 min
 Reproducir
-
-
-### Sección 9: Header
-63. Estructura del header
-8 min
-Reproducir
-64. Opciones del header
-9 min
-Reproducir
-65. Navegando al perfil del usuario logeado
+#### 65. Navegando al perfil del usuario logeado
 6 min
 Reproducir
+
+
+### Sección 10: Panel de usuario
 66. Query para obtener los datos de un usuario
 8 min
 Reproducir
