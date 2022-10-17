@@ -1,3 +1,19 @@
+<p align="center">
+    <a href="https://github.com/petrix12" target="_blank">
+        <img src="https://petrix12.github.io/cvpetrix2022/img/logo-completo-sm.png" width="400" alt="Soluciones++ Logo">
+    </a>
+</p>
+
+<p align="center">Proyecto desarrollado en Node.js y React.js</p>
+<p align="center">
+    <a href="https://nodejs.org/es"><img src="https://raw.githubusercontent.com/petrix12/cvpetrix2022/main/public/img/logos/nodejs.png" alt="Node.js" height="40"></a>
+    <a href="https://reactjs.org"><img src="https://raw.githubusercontent.com/petrix12/cvpetrix2022/main/public/img/logos/reactjs.png" alt="React.js" height="40"></a>
+    <a href="https://www.mongodb.com"><img src="https://raw.githubusercontent.com/petrix12/cvpetrix2022/main/public/img/logos/mongo.png" alt="MongoDB" height="40"></a>
+    <a href="https://aws.amazon.com/es"><img src="https://raw.githubusercontent.com/petrix12/cvpetrix2022/main/public/img/logos/aws.png" alt="AWS" height="40"></a>
+    <a href="https://graphql.org/"><img src="https://raw.githubusercontent.com/petrix12/cvpetrix2022/main/public/img/logos/graphql.png" alt="GraphQL" height="40"></a>
+    <a href="https://www.apollographql.com"><img src="https://raw.githubusercontent.com/petrix12/cvpetrix2022/main/public/img/logos/apollo.png" alt="Apollo" height="40"></a>
+</p>
+
 # Crea un Instagram con React, GraphQL, Apollo, MongoDB y AWS
 + URL: https://www.udemy.com/course/crea-tu-red-social-con-react-graphql-apollo-mongodb-y-aws
 + Instructor: Agustín Navarro Galdon
@@ -2046,7 +2062,13 @@
 
 ### Sección 8: Sistema de Navegación
 #### 58. Instalando React Router Dom
-3 min
++ [Yarn react-router-dom](https://classic.yarnpkg.com/en/package/react-router-dom)
++ [REMIX / REACT ROUTER](https://v5.reactrouter.com/web/guides/quick-start)
+1. Instalar dependencia **Yarn react-router-dom** en la terminal del cliente:
+    + $ yarn add react-router-dom
+
+#### 59. Creando todas las paginas de nuestra aplicación
+4 min
 Reproducir
 
 
@@ -2062,9 +2084,6 @@ Reproducir
 
 
 
-#### 59. Creando todas las paginas de nuestra aplicación
-4 min
-Reproducir
 #### 60. Creando el sistema de navegación
 12 min
 Reproducir
